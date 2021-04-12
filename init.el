@@ -73,6 +73,10 @@
 ;; On non-Guix systems, "ensure" packages by default
 (setq use-package-always-ensure (not dw/is-guix-system))
 
+;; Change the user-emacs-directory to keep unwanted things out of ~/.emacs.d
+(setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
+      url-history-file (expand-file-name "url/history" user-emacs-directory))
+
 ;; Bootstrap straight.el
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -97,10 +101,6 @@
 (require 'straight-x)
 
 
-;; Change the user-emacs-directory to keep unwanted things out of ~/.emacs.d
-(setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
-      url-history-file (expand-file-name "url/history" user-emacs-directory))
-
 ;; Use no-littering to automatically set common paths to the new user-emacs-directory
 (use-package no-littering)
 
@@ -114,10 +114,6 @@
 
 ;; Add my library path to load-path
 (push "~/.emacs.d/lisp" load-path)
-
-
-(server-start)
-
 
 
 (use-package which-key
@@ -763,33 +759,64 @@
 
 (defun dw/set-js-indentation ()
   (setq js-indent-level 2)
-  (setq evil-shift-width js-indent-level)
   (setq-default tab-width 2))
 
 (use-package js2-mode
-  :mode "\\.jsx?\\'"
+  :ensure t
+  :mode "\\.js\\'"
+  :interpreter "node"
   :config
   ;; Use js2-mode for Node scripts
-  (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
+  ;; (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
 
   ;; Don't use built-in syntax checking
-  (setq js2-mode-show-strict-warnings nil)
+  ;; (setq js2-mode-show-strict-warnings nil)
+  (use-package prettier-js :ensure t)
+  (use-package rjsx-mode :ensure t
+               :mode "\\.jsx\\'"
+               :magic ("import React" . rjsx-mode))
+  (use-package js2-refactor :ensure t)
+  (use-package json-mode :ensure t)
+  (use-package nodejs-repl :ensure t)
+  (add-hook 'js2-mode-hook #'js2-refactor-mode)
+  (add-hook 'js2-mode-hook
+            '(lambda ()
+               (js2-refactor-mode)
+               (js2r-add-keybindings-with-prefix "M-m")
+               (key-chord-define js2-mode-map ";;" (λ (save-excursion (move-end-of-line nil) (insert ";"))))
+               (key-chord-define js2-mode-map ",," (λ (save-excursion (move-end-of-line nil) (insert ","))))
 
-  ;; Set up proper indentation in JavaScript and JSON files
-  (add-hook 'js2-mode-hook #'dw/set-js-indentation)
-  (add-hook 'json-mode-hook #'dw/set-js-indentation))
+               (define-key js2-mode-map (kbd ";")
+                 (λ (if (looking-at ";")
+                        (forward-char)
+                      (funcall 'self-insert-command 1))))
+
+               ;; Overwrite this function to output to minibuffer
+               (defun nodejs-repl-execute (command &optional buf)
+                 "Execute a command and output the result to minibuffer."
+                 (let ((ret (nodejs-repl--send-string (concat command "\n"))))
+                   (setq ret (replace-regexp-in-string nodejs-repl-ansi-color-sequence-re "" ret))
+                   ;; delete inputs
+                   (setq ret (replace-regexp-in-string "\\(\\w\\|\\W\\)+\r\r\n" "" ret))
+                   (setq ret (replace-regexp-in-string "\r" "" ret))
+                   (setq ret (replace-regexp-in-string "\n.*\\'" "" ret))
+                   (setq ret (replace-regexp-in-string "\nundefined\\'" "" ret))
+                   (message ret)))
+
+               (defadvice nodejs-repl (after switch-back activate)
+                 (delete-window))))
+
 
 
 (use-package apheleia
-  :straight (apheleia :host github :repo "raxod502/apheleia")
   :config
-  (apheleia-global-mode t))
+  (apheleia-global-mode +1))
 
-(use-package prettier-js
-  ;; :hook ((js2-mode . prettier-js-mode)
-  ;;        (typescript-mode . prettier-js-mode))
-  :config
-  (setq prettier-js-show-errors nil))
+;; (use-package prettier-js
+;;   :hook ((js2-mode . prettier-js-mode)
+;;          (typescript-mode . prettier-js-mode))
+;;   :config
+;;   (setq prettier-js-show-errors nil))
 
 
 ;; Scheme
@@ -927,3 +954,4 @@
   :defer t
   :after docker)
 
+(server-start)
