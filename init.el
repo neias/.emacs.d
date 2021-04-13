@@ -11,7 +11,6 @@
 
 (set-default-coding-systems 'utf-8)
 
-
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
 
@@ -24,7 +23,7 @@
                               (time-subtract after-init-time before-init-time)))
                      gcs-done)))
 
-;; ESC Cancels All
+;; ;; ESC Cancels All
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 ;; Silence compiler warnings as they can be pretty disruptive
@@ -44,7 +43,6 @@
                              (string-equal (f-read "/etc/issue")
                                            "\nThis is the GNU system.  Welcome.\n")))
 
-
 ;; Initialize package sources
 (require 'package)
 
@@ -54,8 +52,8 @@
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 
 ;; Fix an issue accessing the ELPA archive in Termux
-(when dw/is-termux
-  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
+;; (when dw/is-termux
+;;   (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
 
 (package-initialize)
 (unless package-archive-contents
@@ -64,7 +62,7 @@
 ;; Initialize use-package on non-Linux platforms
 (unless (or (package-installed-p 'use-package)
             dw/is-guix-system)
-   (package-install 'use-package))
+  (package-install 'use-package))
 (require 'use-package)
 
 ;; Uncomment this to get a reading on packages that get loaded at startup
@@ -80,13 +78,13 @@
 ;; Bootstrap straight.el
 (defvar bootstrap-version)
 (let ((bootstrap-file
-      (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
-        "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-        'silent 'inhibit-cookies)
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
@@ -127,12 +125,8 @@
   :config (key-chord-mode 1))
 
 
-;; general configuration
-
 ;; Thanks, but no thanks
 (setq inhibit-startup-message t)
-
-
 
 
 (unless dw/is-termux
@@ -169,10 +163,10 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; Enable line numbers for some modes
-;; (dolist (mode '(text-mode-hook
-;;                 prog-mode-hook
-;;                 conf-mode-hook))
-;;   (add-hook mode (lambda () (display-line-numbers-mode 1))))
+(dolist (mode '(text-mode-hook
+                prog-mode-hook
+                conf-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 1))))
 
 
 
@@ -186,7 +180,7 @@
 ;; Don’t warn when advice is added for functions
 (setq ad-redefinition-action 'accept)
 
-;; theme 
+;; theme
 (use-package spacegray-theme :defer t)
 (use-package doom-themes :defer t)
 
@@ -196,8 +190,8 @@
 
 (defun dw/replace-unicode-font-mapping (block-name old-font new-font)
   (let* ((block-idx (cl-position-if
-                         (lambda (i) (string-equal (car i) block-name))
-                         unicode-fonts-block-font-mapping))
+                     (lambda (i) (string-equal (car i) block-name))
+                     unicode-fonts-block-font-mapping))
          (block-fonts (cadr (nth block-idx unicode-fonts-block-font-mapping)))
          (updated-block (cl-substitute new-font old-font block-fonts :test 'string-equal)))
     (setf (cdr (nth block-idx unicode-fonts-block-font-mapping))
@@ -211,12 +205,12 @@
   :config
   ;; Fix the font mappings to use the right emoji font
   (mapcar
-    (lambda (block-name)
-      (dw/replace-unicode-font-mapping block-name "Apple Color Emoji" "Noto Color Emoji"))
-    '("Dingbats"
-      "Emoticons"
-      "Miscellaneous Symbols and Pictographs"
-      "Transport and Map Symbols"))
+   (lambda (block-name)
+     (dw/replace-unicode-font-mapping block-name "Apple Color Emoji" "Noto Color Emoji"))
+   '("Dingbats"
+     "Emoticons"
+     "Miscellaneous Symbols and Pictographs"
+     "Transport and Map Symbols"))
   (unicode-fonts-setup))
 
 ;; Emojis in buffers
@@ -239,37 +233,37 @@
   (sml/setup)
   (sml/apply-theme 'respectful)  ; Respect the theme colors
   (setq sml/mode-width 'right
-      sml/name-width 60)
+        sml/name-width 60)
 
   (setq-default mode-line-format
-  `("%e"
-      ,(when dw/exwm-enabled
-          '(:eval (format "[%d] " exwm-workspace-current-index)))
-      mode-line-front-space
-      evil-mode-line-tag
-      mode-line-mule-info
-      mode-line-client
-      mode-line-modified
-      mode-line-remote
-      mode-line-frame-identification
-      mode-line-buffer-identification
-      sml/pos-id-separator
-      (vc-mode vc-mode)
-      " "
-      ;mode-line-position
-      sml/pre-modes-separator
-      mode-line-modes
-      " "
-      mode-line-misc-info))
+                `("%e"
+                  ,(when dw/exwm-enabled
+                     '(:eval (format "[%d] " exwm-workspace-current-index)))
+                  mode-line-front-space
+                  evil-mode-line-tag
+                  mode-line-mule-info
+                  mode-line-client
+                  mode-line-modified
+                  mode-line-remote
+                  mode-line-frame-identification
+                  mode-line-buffer-identification
+                  sml/pos-id-separator
+                  (vc-mode vc-mode)
+                  " "
+                                        ;mode-line-position
+                  sml/pre-modes-separator
+                  mode-line-modes
+                  " "
+                  mode-line-misc-info))
 
   (setq rm-excluded-modes
-    (mapconcat
-      'identity
-      ; These names must start with a space!
-      '(" GitGutter" " MRev" " company"
-      " Helm" " Undo-Tree" " Projectile.*" " Z" " Ind"
-      " Org-Agenda.*" " ElDoc" " SP/s" " cider.*")
-      "\\|")))
+        (mapconcat
+         'identity
+                                        ; These names must start with a space!
+         '(" GitGutter" " MRev" " company"
+           " Helm" " Undo-Tree" " Projectile.*" " Z" " Ind"
+           " Org-Agenda.*" " ElDoc" " SP/s" " cider.*")
+         "\\|")))
 
 
 ;; You must run (all-the-icons-install-fonts) one time after
@@ -325,15 +319,15 @@
   (show-paren-mode 1))
 
 
-;; Displaying World Time
-(setq display-time-world-list
-  '(("Etc/UTC" "UTC")
-    ("America/Los_Angeles" "Seattle")
-    ("America/New_York" "New York")
-    ("Europe/Athens" "Athens")
-    ("Pacific/Auckland" "Auckland")
-    ("Asia/Shanghai" "Shanghai")))
-(setq display-time-world-time-format "%a, %d %b %I:%M %p %Z")
+;; ;; Displaying World Time
+;; (setq display-time-world-list
+;;       '(("Etc/UTC" "UTC")
+;;         ("America/Los_Angeles" "Seattle")
+;;         ("America/New_York" "New York")
+;;         ("Europe/Athens" "Athens")
+;;         ("Pacific/Auckland" "Auckland")
+;;         ("Asia/Shanghai" "Shanghai")))
+;; (setq display-time-world-time-format "%a, %d %b %I:%M %p %Z")
 
 ;; Set default connection mode to SSH
 (setq tramp-default-method "ssh")
@@ -351,7 +345,7 @@
 (use-package origami
   :hook (yaml-mode . origami-mode))
 
-(use-package command-log-mode)
+;; (use-package command-log-mode)
 
 ;; Stateful Keymaps with Hydra
 (use-package hydra
@@ -495,8 +489,8 @@
     (when selectrum-active-p
       (cons (selectrum--get-meta 'category)
             (selectrum-get-current-candidates
-            ;; Pass relative file names for dired.
-            minibuffer-completing-file-name))))
+             ;; Pass relative file names for dired.
+             minibuffer-completing-file-name))))
 
   ;; No unnecessary computation delay after injection.
   ;; (add-hook 'embark-setup-hook 'selectrum-set-selected-candidate)
@@ -707,22 +701,22 @@
   :config
   (setq openwith-associations
         (list
-          (list (openwith-make-extension-regexp
+         (list (openwith-make-extension-regexp
                 '("mpg" "mpeg" "mp3" "mp4"
                   "avi" "wmv" "wav" "mov" "flv"
                   "ogm" "ogg" "mkv"))
-                "mpv"
-                '(file))
-          (list (openwith-make-extension-regexp
+               "mpv"
+               '(file))
+         (list (openwith-make-extension-regexp
                 '("xbm" "pbm" "pgm" "ppm" "pnm"
                   "png" "gif" "bmp" "tif" "jpeg")) ;; Removed jpg because Telega was
-                  ;; causing feh to be opened...
-                  "feh"
-                  '(file))
-          (list (openwith-make-extension-regexp
+               ;; causing feh to be opened...
+               "feh"
+               '(file))
+         (list (openwith-make-extension-regexp
                 '("pdf"))
-                "zathura"
-                '(file)))))
+               "zathura"
+               '(file)))))
 
 ;; Projectile
 (defun dw/switch-project-action ()
@@ -749,62 +743,72 @@
   (counsel-projectile-mode))
 
 
-;; TypeScript and JavaScript
-(use-package nvm
-  :defer t)
-(use-package typescript-mode
-  :mode "\\.ts\\'"
-  :config
-  (setq typescript-indent-level 2))
+;; ;; TypeScript and JavaScript
+;; (use-package nvm
+;;   :defer t)
+;; (use-package typescript-mode
+;;   :mode "\\.ts\\'"
+;;   :config
+;;   (setq typescript-indent-level 2))
 
-(defun dw/set-js-indentation ()
-  (setq js-indent-level 2)
-  (setq-default tab-width 2))
+;; (defun dw/set-js-indentation ()
+;;   (setq js-indent-level 2)
+;;   (setq-default tab-width 2))
 
-(use-package js2-mode
-  :ensure t
-  :mode "\\.js\\'"
-  :interpreter "node"
-  :config
+;; (use-package js2-mode
+;;   :ensure t
+;;   :config
+  ;; :defer 20
+  ;; :init
+  ;; (setq-default js2-concat-multiline-strings 'eol)
+  ;; (setq-default js2-global-externs '("module" "require" "setTimeout" "clearTimeout" "setInterval"
+  ;;                                    "clearInterval" "location" "__dirname" "console" "JSON" "window"
+  ;;                                    "process" "fetch"))
+  ;; (setq-default js2-strict-trailing-comma-warning t)
+  ;; (setq-default js2-strict-inconsistent-return-warning nil)
+  ;; :mode "\\.js\\'"
+  ;; :interpreter "node"
+  ;; :config
   ;; Use js2-mode for Node scripts
   ;; (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
 
   ;; Don't use built-in syntax checking
   ;; (setq js2-mode-show-strict-warnings nil)
-  (use-package prettier-js :ensure t)
-  (use-package rjsx-mode :ensure t
-               :mode "\\.jsx\\'"
-               :magic ("import React" . rjsx-mode))
-  (use-package js2-refactor :ensure t)
-  (use-package json-mode :ensure t)
-  (use-package nodejs-repl :ensure t)
-  (add-hook 'js2-mode-hook #'js2-refactor-mode)
-  (add-hook 'js2-mode-hook
-            '(lambda ()
-               (js2-refactor-mode)
-               (js2r-add-keybindings-with-prefix "M-m")
-               (key-chord-define js2-mode-map ";;" (λ (save-excursion (move-end-of-line nil) (insert ";"))))
-               (key-chord-define js2-mode-map ",," (λ (save-excursion (move-end-of-line nil) (insert ","))))
+  ;; (use-package prettier-js :ensure t)
+  ;; (use-package rjsx-mode :ensure t
+  ;;              :mode "\\.jsx\\'"
+  ;;              :magic ("import React" . rjsx-mode))
+  ;; (use-package js2-refactor :ensure t)
+  ;; (use-package json-mode :ensure t)
+  ;; (use-package nodejs-repl :ensure t)
+  ;; (add-hook 'js2-mode-hook #'js2-refactor-mode)
+  ;; (add-hook 'js2-mode-hook
+  ;;           '(lambda ()
+  ;;              (js2-refactor-mode)
+  ;;              (js2r-add-keybindings-with-prefix "M-m")
+  ;;              (key-chord-define js2-mode-map ";;" (λ (save-excursion (move-end-of-line nil) (insert ";"))))
+  ;;              (key-chord-define js2-mode-map ",," (λ (save-excursion (move-end-of-line nil) (insert ","))))
 
-               (define-key js2-mode-map (kbd ";")
-                 (λ (if (looking-at ";")
-                        (forward-char)
-                      (funcall 'self-insert-command 1))))
+  ;;              (define-key js2-mode-map (kbd ";")
+  ;;                (λ (if (looking-at ";")
+  ;;                       (forward-char)
+  ;;                     (funcall 'self-insert-command 1))))
 
-               ;; Overwrite this function to output to minibuffer
-               (defun nodejs-repl-execute (command &optional buf)
-                 "Execute a command and output the result to minibuffer."
-                 (let ((ret (nodejs-repl--send-string (concat command "\n"))))
-                   (setq ret (replace-regexp-in-string nodejs-repl-ansi-color-sequence-re "" ret))
-                   ;; delete inputs
-                   (setq ret (replace-regexp-in-string "\\(\\w\\|\\W\\)+\r\r\n" "" ret))
-                   (setq ret (replace-regexp-in-string "\r" "" ret))
-                   (setq ret (replace-regexp-in-string "\n.*\\'" "" ret))
-                   (setq ret (replace-regexp-in-string "\nundefined\\'" "" ret))
-                   (message ret)))
+  ;;              ;; Overwrite this function to output to minibuffer
+  ;;              ;; (defun nodejs-repl-execute (command &optional buf)
+  ;;              ;;   "Execute a command and output the result to minibuffer."
+  ;;              ;;   (let ((ret (nodejs-repl--send-string (concat command "\n"))))
+  ;;              ;;     (setq ret (replace-regexp-in-string nodejs-repl-ansi-color-sequence-re "" ret))
+  ;;              ;;     ;; delete inputs
+  ;;              ;;     (setq ret (replace-regexp-in-string "\\(\\w\\|\\W\\)+\r\r\n" "" ret))
+  ;;              ;;     (setq ret (replace-regexp-in-string "\r" "" ret))
+  ;;              ;;     (setq ret (replace-regexp-in-string "\n.*\\'" "" ret))
+  ;;              ;;     (setq ret (replace-regexp-in-string "\nundefined\\'" "" ret))
+  ;;              ;;     (message ret)))
 
-               (defadvice nodejs-repl (after switch-back activate)
-                 (delete-window))))
+  ;;              (defadvice nodejs-repl (after switch-back activate)
+  ;;                (delete-window))))
+  ;; )
 
 
 
@@ -894,8 +898,8 @@
   :hook (org-mode
          emacs-lisp-mode
          web-mode
-         typescript-mode
-         js2-mode))
+         ;; js2-mode
+         typescript-mode))
 
 ;; TODO: Figure out how to query for 'done' bugs
 (defun dw/debbugs-guix-patches ()
@@ -923,7 +927,7 @@
 (defun dw/toggle-focus-mode ()
   (interactive)
   (if (symbol-value darkroom-mode)
-    (dw/leave-focus-mode)
+      (dw/leave-focus-mode)
     (dw/enter-focus-mode)))
 
 (use-package vterm
@@ -937,9 +941,9 @@
   (setq term-buffer-maximum-size 10000)
   (setq term-scroll-to-bottom-on-output t)
   (add-hook 'term-mode-hook
-      (lambda ()
-        (add-to-list 'term-bind-key-alist '("M-[" . multi-term-prev))
-        (add-to-list 'term-bind-key-alist '("M-]" . multi-term-next)))))
+            (lambda ()
+              (add-to-list 'term-bind-key-alist '("M-[" . multi-term-prev))
+              (add-to-list 'term-bind-key-alist '("M-]" . multi-term-next)))))
 
 
 ;; Don't let ediff break EXWM, keep it in one frame
@@ -954,4 +958,4 @@
   :defer t
   :after docker)
 
-(server-start)
+;; (server-start)
