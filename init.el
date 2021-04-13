@@ -743,73 +743,15 @@
   (counsel-projectile-mode))
 
 
-;; ;; TypeScript and JavaScript
-;; (use-package nvm
-;;   :defer t)
-;; (use-package typescript-mode
-;;   :mode "\\.ts\\'"
-;;   :config
-;;   (setq typescript-indent-level 2))
-
-;; (defun dw/set-js-indentation ()
-;;   (setq js-indent-level 2)
-;;   (setq-default tab-width 2))
-
-;; (use-package js2-mode
-;;   :ensure t
-;;   :config
-  ;; :defer 20
-  ;; :init
-  ;; (setq-default js2-concat-multiline-strings 'eol)
-  ;; (setq-default js2-global-externs '("module" "require" "setTimeout" "clearTimeout" "setInterval"
-  ;;                                    "clearInterval" "location" "__dirname" "console" "JSON" "window"
-  ;;                                    "process" "fetch"))
-  ;; (setq-default js2-strict-trailing-comma-warning t)
-  ;; (setq-default js2-strict-inconsistent-return-warning nil)
-  ;; :mode "\\.js\\'"
-  ;; :interpreter "node"
-  ;; :config
-  ;; Use js2-mode for Node scripts
-  ;; (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
-
-  ;; Don't use built-in syntax checking
-  ;; (setq js2-mode-show-strict-warnings nil)
-  ;; (use-package prettier-js :ensure t)
-  ;; (use-package rjsx-mode :ensure t
-  ;;              :mode "\\.jsx\\'"
-  ;;              :magic ("import React" . rjsx-mode))
-  ;; (use-package js2-refactor :ensure t)
-  ;; (use-package json-mode :ensure t)
-  ;; (use-package nodejs-repl :ensure t)
-  ;; (add-hook 'js2-mode-hook #'js2-refactor-mode)
-  ;; (add-hook 'js2-mode-hook
-  ;;           '(lambda ()
-  ;;              (js2-refactor-mode)
-  ;;              (js2r-add-keybindings-with-prefix "M-m")
-  ;;              (key-chord-define js2-mode-map ";;" (λ (save-excursion (move-end-of-line nil) (insert ";"))))
-  ;;              (key-chord-define js2-mode-map ",," (λ (save-excursion (move-end-of-line nil) (insert ","))))
-
-  ;;              (define-key js2-mode-map (kbd ";")
-  ;;                (λ (if (looking-at ";")
-  ;;                       (forward-char)
-  ;;                     (funcall 'self-insert-command 1))))
-
-  ;;              ;; Overwrite this function to output to minibuffer
-  ;;              ;; (defun nodejs-repl-execute (command &optional buf)
-  ;;              ;;   "Execute a command and output the result to minibuffer."
-  ;;              ;;   (let ((ret (nodejs-repl--send-string (concat command "\n"))))
-  ;;              ;;     (setq ret (replace-regexp-in-string nodejs-repl-ansi-color-sequence-re "" ret))
-  ;;              ;;     ;; delete inputs
-  ;;              ;;     (setq ret (replace-regexp-in-string "\\(\\w\\|\\W\\)+\r\r\n" "" ret))
-  ;;              ;;     (setq ret (replace-regexp-in-string "\r" "" ret))
-  ;;              ;;     (setq ret (replace-regexp-in-string "\n.*\\'" "" ret))
-  ;;              ;;     (setq ret (replace-regexp-in-string "\nundefined\\'" "" ret))
-  ;;              ;;     (message ret)))
-
-  ;;              (defadvice nodejs-repl (after switch-back activate)
-  ;;                (delete-window))))
-  ;; )
-
+;; js and typescript
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+(add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (setup-tide-mode))))
+;; enable typescript-tslint checker
+(flycheck-add-mode 'typescript-tslint 'web-mode)
 
 
 (use-package apheleia
