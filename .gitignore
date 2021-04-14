@@ -55,9 +55,3 @@ flycheck_*.el
 
 
 # End of https://www.toptal.com/developers/gitignore/api/emacs
-
-/straight
-/var
-ido.last
-recentf
-smex-items
