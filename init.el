@@ -77,9 +77,51 @@
 ;; Set up the visible bell
 (setq visible-bell t)
 
-(use-package helm
+;; (use-package helm
+;;   :ensure t
+;;   :config (helm-mode 1))
+
+(setq ido-everywhere t)
+(setq ido-enable-flex-maching t)
+(ido-mode t)
+
+(use-package projectile
   :ensure t
-  :config (helm-mode 1))
+  :config
+  (define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map)
+  (projectile-mode +1))
+
+(use-package helm-projectile
+  :ensure t
+  :config (helm-projectile-on))
+
+(use-package dashboard
+  :ensure t
+  :init
+  (progn
+    (setq dashboard-items '((recents . 1)
+			    (projects . 1)))
+    ;; (setq dashboard-show-shortcuts nil)
+    (setq dashboard-center-content nil)
+    (setq dashboard-banner-logo-title "neias")
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-startup-banner "~/.emacs.d/images/me.png"))
+  :config
+  (dashboard-setup-startup-hook))
+
+(use-package treemacs
+  :ensure t
+  :bind
+  (:map global-map
+	([f8] . treemacs)
+	("C-<f8>" . treemacs-select-window))
+  :config
+  (setq treemacs-is-never-other-window t))
+
+(use-package treemacs-projectile
+  :after treemacs projectile
+  :ensure t)
 
 
 
@@ -924,7 +966,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(helm doom-modeline doom-themes which-key use-package)))
+ '(package-selected-packages
+   '(treemacs dashboard helm-projectile projectile helm doom-modeline doom-themes which-key use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
