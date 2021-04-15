@@ -45,7 +45,7 @@
   ;; (doom-modeline-buffer-file-name-style 'truncate-except-project)
 ;; (doom-modeline-major-mode-icon nil))
 
-(use-package all-the-icons ;; M-x all-the-icons-install-fonts RET 
+(use-package all-the-icons ;; M-x all-the-icons-install-fonts RET
   :ensure t)
 
 ;; Thanks, but no thanks
@@ -55,7 +55,7 @@
 (menu-bar-mode -1)	    ; Disable the menu bar
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (global-hl-line-mode +1)    ; Highlight line
-(delete-selection-mode 1)   ; Delete selection 
+(delete-selection-mode 1)   ; Delete selection
 ;; (tooltip-mode -1)           ; Disable tooltips
 (set-default-coding-systems 'utf-8)
 (setq backup-directory-alist '(("." . "~/.saves")))   ; Different backup directory
@@ -100,13 +100,22 @@
   :init
   (progn
     (setq dashboard-items '((recents . 1)
-			    (projects . 1)))
+			    (projects . 1)
+			    (bookmarks . 2)))
     ;; (setq dashboard-show-shortcuts nil)
     (setq dashboard-center-content nil)
     (setq dashboard-banner-logo-title "neias")
     (setq dashboard-set-file-icons t)
     (setq dashboard-set-heading-icons t)
-    (setq dashboard-startup-banner "~/.emacs.d/images/me.png"))
+    (setq dashboard-startup-banner "~/.emacs.d/images/emacs-logo.png")
+    (setq dashboard-set-navigator t)
+    (setq dashboard-navigator-buttons
+	  `(;; linel
+	    ((, nil
+		"init file"
+		"Open init file"
+		(lambda (&rest _) (find-file "~/.emacs.d/init.el"))
+		)))))
   :config
   (dashboard-setup-startup-hook))
 
@@ -122,6 +131,91 @@
 (use-package treemacs-projectile
   :after treemacs projectile
   :ensure t)
+
+(use-package expand-region
+  :ensure t
+  :bind
+  ("C-*" . er/expand-region)
+  ("C--" . er/contract-region))
+
+(defun eshell-here ()
+      "Opens up a new shell in the directory associated with the
+    current buffer's file. The eshell is renamed to match that
+    directory to make multiple eshell windows easier."
+      (interactive)
+      (let* ((parent (if (buffer-file-name)
+                         (file-name-directory (buffer-file-name))
+                       default-directory))
+             (height (/ (window-total-height) 3))
+             (name   (car (last (split-string parent "/" t)))))
+        (split-window-vertically (- height))
+        (other-window 1)
+        (eshell "new")
+        (rename-buffer (concat "*eshell: " name "*"))
+
+        (insert (concat "ls"))
+        (eshell-send-input)))
+
+(global-set-key (kbd "C-x t") 'eshell-here)
+
+(defun eshell/x ()
+  (insert "exit")
+  (eshell-send-input)
+  (delete-window))
+
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+(setq org-support-shift-select t)
+
+(use-package centaur-tabs
+  :ensure t
+  :config
+  (setq centaur-tabs-set-bar 'over
+	centaur-tabs-set-icons t
+	centaur-tabs-gray-out-icons 'buffer
+	centaur-tabs-height 24
+	centaur-tabs-set-modified-marker t
+	centaur-tabs-modified-marker "o")
+  (centaur-tabs-mode t))
+
+(use-package company
+  :ensure t
+  :init
+  (add-hook 'after-init-book 'global-company-mode))
+
+(use-package flycheck
+  :ensure t
+  :init
+  (global-flycheck-mode))
+
+(use-package typescript-mode
+  :ensure t
+  :mode "\\.js\\'")
+
+(defun setup-tide-mode()
+  "Setup function for tide."
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (tide-hl-identifier-mdoe +1)
+  (company-mode +1))
+
+(use-package tide
+  :ensure t
+  :after (typescript-mode company flycheck)
+  :hook (typescript-mode . setup-tide-mode))
+
+(use-package prettier-js
+  :ensure t
+  :after (typescript-mode)
+  :hook (typescript-mdoe . prettier-js-mode))
+
+
+
 
 
 
@@ -961,16 +1055,3 @@
 ;;   :after docker)
 
 ;; ;; (server-start)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(treemacs dashboard helm-projectile projectile helm doom-modeline doom-themes which-key use-package)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
