@@ -150,7 +150,8 @@
         (rename-buffer (concat "*eshell: " name "*"))
 
         (insert (concat "ls"))
-        (eshell-send-input)))
+        (eshell-send-input))
+      :bind ("C-c C-c" . eshell-quit-process))
 
 (global-set-key (kbd "C-x t") 'eshell-here)
 
@@ -303,6 +304,17 @@
   :after prescient
   :config
   (ivy-prescient-mode 1))
+
+;; Snippets
+ (use-package yasnippet
+       :ensure t
+       :init
+       (yas-global-mode 1)
+       :config
+       (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets")))
+
+
+
 
 
 ;; ;; The default is 800 kilobytes.  Measured in bytes.
@@ -971,11 +983,7 @@
 ;;   :defer t
 ;;   :hook (lsp-mode . flycheck-mode))
 
-;; ;; Snippets
-;; (use-package yasnippet
-;;   :hook (prog-mode . yas-minor-mode)
-;;   :config
-;;   (yas-reload-all))
+
 
 ;; (use-package smartparens
 ;;   :hook (prog-mode . smartparens-mode))
@@ -1055,7 +1063,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(ivy-prescient prescient ivy-rich counsel ivy which-key use-package treemacs-projectile tide prettier-js org-bullets helm-projectile expand-region doom-themes doom-modeline dashboard company centaur-tabs)))
+   '(yasnippet ivy-prescient prescient ivy-rich counsel ivy which-key use-package treemacs-projectile tide prettier-js org-bullets helm-projectile expand-region doom-themes doom-modeline dashboard company centaur-tabs)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

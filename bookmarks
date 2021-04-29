@@ -2,7 +2,12 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("Emacs Configure"
+(("QuteBrowser Config"
+ (filename . "~/AppData/Roaming/qutebrowser/config/config.py")
+ (front-context-string . "# qutemacs - a s")
+ (rear-context-string)
+ (position . 1))
+("Emacs Configure"
  (filename . "~/.emacs.d/init.el")
  (front-context-string . "\n;;             ")
  (rear-context-string . "ge collections.\"")
