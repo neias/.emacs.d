@@ -2,5 +2,4 @@
 # name: <div class="className">...</div>
 # key: div
 # --
-<div class="${1:text}">$0</div>
-
+<div class="${1:text}">$0</div><!-- end $1 -->

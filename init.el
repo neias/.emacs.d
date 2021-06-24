@@ -1,3 +1,17 @@
+;;; init.el --- My Emacs Config
+
+;; Author: Emre Acar <emreacar@hotmail.com>
+;; Version: 1.3
+;; Keywords: Emacs, cofiguration
+;; URL: https://github.com/neias/.emacs.d
+
+;;; Commentary:
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License
+;; as published by the Free Software Foundation, either version
+;; 3 of the License, or (at your option) any later version.
+
 ;; Initialize package sources
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -142,7 +156,7 @@
       (let* ((parent (if (buffer-file-name)
                          (file-name-directory (buffer-file-name))
                        default-directory))
-             (height (/ (window-total-height) 3))
+             (height (/ (window-total-height) 4))
              (name   (car (last (split-string parent "/" t)))))
         (split-window-vertically (- height))
         (other-window 1)
@@ -178,10 +192,20 @@
 	centaur-tabs-modified-marker "o")
   (centaur-tabs-mode t))
 
+
+
 (use-package company
   :ensure t
   :init
-  (add-hook 'after-init-book 'global-company-mode))
+  (add-hook 'after-init-book 'company-tabnine))
+
+;; Trigger completion immediately.
+(setq company-idle-delay 0)
+
+;; Number the candidates (use M-1, M-2 etc to select completions).
+(setq company-show-numbers t)
+
+
 
 (use-package flycheck
   :ensure t
@@ -190,7 +214,9 @@
 
 (use-package typescript-mode
   :ensure t
-  :mode "\\.js\\'")
+  :mode ("\\.js\\'")
+  :mode ("\\.ts\\'" . typescript-mode)
+  :mode ("\\.tsx\\'" . typescript-mode))
 
 (defun setup-tide-mode()
   "Setup function for tide."
@@ -313,6 +339,15 @@
        :config
        (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets")))
 
+;; Window Selection with ace-window
+(use-package ace-window
+  :bind (("M-o" . ace-window))
+  :custom
+  (aw-scope 'frame)
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  (aw-minibuffer-flag t)
+  :config
+  (ace-window-display-mode 1))
 
 
 ;; ;; The default is 800 kilobytes.  Measured in bytes.
@@ -702,21 +737,13 @@
 ;;          ;; Group remaining buffers by major mode.
 ;;          (auto-mode))))
 
-;; ;; Frame Scaling / Zooming
+;; Frame Scaling / Zooming
 ;; (use-package default-text-scale
 ;;   :defer 1
 ;;   :config
 ;;   (default-text-scale-mode))
 
-;; ;; Window Selection with ace-window
-;; (use-package ace-window
-;;   :bind (("M-o" . ace-window))
-;;   :custom
-;;   (aw-scope 'frame)
-;;   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-;;   (aw-minibuffer-flag t)
-;;   :config
-;;   (ace-window-display-mode 1))
+
 
 ;; ;; Window History with winner-mode
 ;; ;; (use-package winner
