@@ -72,6 +72,12 @@
 (column-number-mode)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ; Display line numbers when programming
 
+(use-package projectile
+  :ensure t
+  :config
+  (define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map)
+  (projectile-mode +1))
+
 ;; Emacs dashboard configure
 (use-package dashboard
   :ensure t
@@ -80,7 +86,7 @@
     (setq dashboard-items '((recents . 3)
 			    (projects . 3)
 			    (bookmarks . 3)))
-    (setq dashboard-show-shortcuts nil)
+    ;; (setq dashboard-show-shortcuts nil)
     (setq dashboard-center-content nil)
     (setq dashboard-banner-logo-title "neias")
     (setq dashboard-set-file-icons t)

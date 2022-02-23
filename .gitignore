@@ -56,3 +56,6 @@ flycheck_*.el
 recentf
 
 # End of https://www.toptal.com/developers/gitignore/api/emacs
+
+#Projectile bookmarks
+*.eld
