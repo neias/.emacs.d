@@ -13,7 +13,10 @@
 
 ;; Define and initialise package repositories
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("melpa-stable" . "https://stable.melpa.org/packages/")
+                         ("org" . "https://orgmode.org/elpa/")
+                         ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 
 ;; use-package to simplify the config file
@@ -257,6 +260,14 @@
 (use-package php-mode
   :hook (php-mode . flycheck))
 
+;; HTML
+(use-package web-mode
+  :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
+  :config
+  (setq-default web-mode-code-indent-offset 2)
+  (setq-default web-mode-markup-indent-offset 2)
+  (setq-default web-mode-attribute-indent-offset 2))
+
 (use-package tide
   :ensure t
   :after (typescript-mode company flycheck)
@@ -268,7 +279,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(tide php-mode flx ace-window ivy-prescient prescient ivy-rich dashboard doom-modeline flycheck company centaur-tabs expand-region all-the-icons doom-themes use-package)))
+   '(web-mode projectile tide php-mode flx ace-window ivy-prescient prescient ivy-rich dashboard doom-modeline flycheck company centaur-tabs expand-region all-the-icons doom-themes use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
