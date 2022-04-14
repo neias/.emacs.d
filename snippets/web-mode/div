@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: <div class="className">...</div>
+# @param
+# key: divc
+# --
+<div class="${1:Class Name}">$0</div><!-- end $1 -->
