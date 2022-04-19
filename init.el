@@ -11,12 +11,14 @@
 (set-locale-environment "en.UTF-8")
 (prefer-coding-system 'utf-8)
 
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
 ;; Define and initialise package repositories
 (require 'package)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
+(add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/") t)
 (package-initialize)
 
 ;; use-package to simplify the config file
@@ -262,16 +264,30 @@
 
 ;; HTML
 (use-package web-mode
-  :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
+  :mode "(\\.\\(html?\\|ejs\\)\\'"
   :config
   (setq-default web-mode-code-indent-offset 2)
   (setq-default web-mode-markup-indent-offset 2)
   (setq-default web-mode-attribute-indent-offset 2))
 
+(defun setup-tide-mode()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (setq-default javascript-intent-level 2)
+  (tide-hl-identifier-mode +1)
+  (company-mode +1))
+
+;; js
+(use-package rjsx-mode
+  :ensure t
+  :mode "\\.js\\'")
+
 (use-package tide
   :ensure t
-  :after (typescript-mode company flycheck)
-  :hook (typescript-mode . setup-tide-mode))
+  :after (rjsx-mode company flycheck)
+  :hook (rjsx-mode . setup-tide-mode))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -279,7 +295,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(web-mode projectile tide php-mode flx ace-window ivy-prescient prescient ivy-rich dashboard doom-modeline flycheck company centaur-tabs expand-region all-the-icons doom-themes use-package)))
+   '(rjsx-mode web-mode projectile tide php-mode flx ace-window ivy-prescient prescient ivy-rich dashboard doom-modeline flycheck company centaur-tabs expand-region all-the-icons doom-themes use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
