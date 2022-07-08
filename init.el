@@ -11,6 +11,10 @@
 (set-locale-environment "en.UTF-8")
 (prefer-coding-system 'utf-8)
 
+;; for mac os 
+(setq ns-alternate-modifier 'meta)
+(setq ns-right-alternate-modifier 'none)
+
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
 ;; Define and initialise package repositories
