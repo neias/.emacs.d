@@ -11,7 +11,6 @@
 (set-locale-environment "en.UTF-8")
 (prefer-coding-system 'utf-8)
 
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
 ;; Define and initialise package repositories
 (require 'package)
@@ -272,12 +271,14 @@
 
 (defun setup-tide-mode()
   (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (setq-default javascript-intent-level 2)
-  (tide-hl-identifier-mode +1)
-  (company-mode +1))
+  (when (or (locate-dominating-file default-directory "tsconfig.json")
+            (locate-dominating-file default-directory "jsconfig.json"))
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (setq-default javascript-intent-level 2)
+    (tide-hl-identifier-mode +1)
+    (company-mode +1)))
 
 ;; js
 (use-package rjsx-mode
