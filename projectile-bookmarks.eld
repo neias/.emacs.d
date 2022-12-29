@@ -1,0 +1,1 @@
+("~/.emacs.d/" "~/apps/stock/" "~/apps/aselsan-api/")
