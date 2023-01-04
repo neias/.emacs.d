@@ -29,20 +29,20 @@
     (setq mac-command-modifier      'meta
           mac-option-modifier       'alt
           mac-right-option-modifier 'super
-					ns-alternate-modifier 'meta
-					ns-right-alternate-modifier 'none))
+	  ns-alternate-modifier 'meta
+	  ns-right-alternate-modifier 'none))
 
 ;; starting resize emacs
 (defun set-frame-size-according-to-resolution ()
   (interactive)
   (if window-system
       (progn
-				(if (> (x-display-pixel-width) 1280)
+	(if (> (x-display-pixel-width) 1280)
             (add-to-list 'default-frame-alist (cons 'width 130))
           (add-to-list 'default-frame-alist (cons 'width 80)))
-				(add-to-list 'default-frame-alist 
-										 (cons 'height (/ (- (x-display-pixel-height) 200)
-																			(frame-char-height)))))))
+	(add-to-list 'default-frame-alist 
+		     (cons 'height (/ (- (x-display-pixel-height) 200)
+				      (frame-char-height)))))))
 (set-frame-size-according-to-resolution)
 
 ;; Define and initialise package repositories
@@ -68,28 +68,46 @@
   (which-key-mode))
 
 (use-package swiper
-  :after ivy
-  :bind (("C-s" . swiper)
-	 )
-  )
+  :ensure t
+  :after ivy)
 
 ;; Better Completions with Ivy
 (use-package ivy
   :ensure t
   :diminish
-  :init
-  (ivy-mode 1)
+  :bind
+  ("C-s" . swiper)
+  :init (ivy-mode 1)
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-wrap t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq enable-recursive-minibuffers t)
+
+  ;; Use different regex strategies per completion command
+  (push '(completion-at-point . ivy--regex-fuzzy) ivy-re-builders-alist) ;; This doesn't seem to work...
+  (push '(swiper . ivy--regex-ignore-order) ivy-re-builders-alist)
+  (push '(counsel-M-x . ivy--regex-ignore-order) ivy-re-builders-alist)
+
+  ;; Set minibuffer height for different commands
+  (setf (alist-get 'counsel-projectile-ag ivy-height-alist) 15)
+  (setf (alist-get 'counsel-projectile-rg ivy-height-alist) 15)
+  (setf (alist-get 'swiper ivy-height-alist) 15)
+  (setf (alist-get 'counsel-switch-buffer ivy-height-alist) 7)
   )
 
 (use-package counsel
   :ensure t
   :demand t
   :bind (("M-x" . counsel-M-x)
-	 ;; ("C-x b" . counsel-ibuffer)
+	 ("C-x b" . counsel-ibuffer)
 	 ;; ("C-x C-f" . counsel-find-file)
 	 ("C-M-j" . counsel-switch-buffer)
-	 ("C-M-l" . counsel-imenu)
-	 )
+	 ("C-M-l" . counsel-imenu))
+  :custom
+  (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
+  ;; :config
+  ;; (setq ivy-initial-inputs-alist nil) ;; Don't start searches with ^
   )
 
 ;;; Sorting and filtering
@@ -108,7 +126,42 @@
   :init
   (ivy-rich-mode 1)
   :after counsel
-  )
+  :config
+  (setq ivy-format-function #'ivy-format-function-line)
+  (setq ivy-rich-display-transformers-list
+	(plist-put ivy-rich-display-transformers-list
+		   'ivy-switch-buffer
+		   '(:columns
+		     ((ivy-rich-candidate (:width 40))
+		      (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right)); return the buffer indicators
+		      (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))          ; return the major mode info
+		      (ivy-rich-switch-buffer-project (:width 15 :face success))             ; return project name using `projectile'
+		      (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))  ; return file path relative to project root or `default-directory' if project is nil
+		     :predicate
+		     (lambda (cand)
+		       (if-let ((buffer (get-buffer cand)))
+			   ;; Don't mess with EXWM buffers
+			   (with-current-buffer buffer
+			     (not (derived-mode-p 'exwm-mode)))))))))
+
+(use-package prescient :ensure t
+  :after counsel
+  :config
+  (prescient-persist-mode 1))
+
+(use-package ivy-prescient :ensure t
+  :after prescient
+  :config
+  (ivy-prescient-mode 1))
+
+;; Snippets
+ (use-package yasnippet
+   :ensure t
+   :init
+   (yas-global-mode 1)
+   :config
+   (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets")))
+
 
 (use-package flx  ;; Improves sorting for fuzzy-matched results
   :after ivy
@@ -256,7 +309,7 @@
   :hook (js2-mode . setup-tide-mode))
 
 (use-package tide
-	:ensure t
+  :ensure t
   :hook ((rjsx-mode . setup-tide-mode)
          (typescript-mode . setup-tide-mode)
          (js2-mode . setup-tide-mode)))
@@ -267,7 +320,7 @@
   (flycheck-mode +1)
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
   (tide-hl-identifier-mode +1)
-	(setq js-indent-level 2)
+  (setq js-indent-level 2)
   (company-mode +1))
 
 (add-hook 'tide-mode-hook #'company-mode)
