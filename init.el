@@ -296,9 +296,14 @@
   :ensure t
   :hook (after-init . global-flycheck-mode))
 
+(use-package prettier-js
+  :ensure t
+  :after (rjsx-mode)
+  :hook (rjsx-mode . prettier-js-mode))
+
 ;;; Tide mode and company mode configuration for TypeScript, JavaScript, and React
 (use-package rjsx-mode
-  :mode ("\\.jsx?\\'" . rjsx-mode)
+  :mode ("\\.js?\\'" . rjsx-mode)
   :hook (rjsx-mode . setup-tide-mode))
 
 (use-package typescript-mode

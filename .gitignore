@@ -45,6 +45,7 @@ flycheck_*.el
 # projectiles files
 .projectile
 projectile.cache
+projectile-bookmarks.eld
 
 # directory configuration
 .dir-locals.el
@@ -91,4 +92,4 @@ var/prescient-save.el
 
 # End of https://www.toptal.com/developers/gitignore/api/emacs,macos
 
-projectile-bookmarks.eld
+

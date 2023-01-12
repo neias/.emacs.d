@@ -1,1 +1,0 @@
-("~/.emacs.d/" "~/app/ornek1/" "~/app/ornek2/" "~/app/stock/")
