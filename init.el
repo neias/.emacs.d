@@ -302,7 +302,9 @@
   :hook (rjsx-mode . setup-tide-mode))
 
 (use-package typescript-mode
+  :ensure t
   :mode ("\\.ts\\'" . typescript-mode)
+  :mode ("\\.tsx\\'" . typescript-mode)
   :hook (typescript-mode . setup-tide-mode))
 
 (use-package js2-mode
@@ -321,6 +323,8 @@
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
   (tide-hl-identifier-mode +1)
   (setq js-indent-level 2)
+  (setq typescript-indent-level 2)
+  (setq company-tooltip-align-annotations t)
   (company-mode +1))
 
 (add-hook 'tide-mode-hook #'company-mode)

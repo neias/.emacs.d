@@ -89,5 +89,6 @@ Temporary Items
 recentf
 var/prescient-save.el
 
-
 # End of https://www.toptal.com/developers/gitignore/api/emacs,macos
+
+projectile-bookmarks.eld
