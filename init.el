@@ -16,7 +16,7 @@
 (setq inhibit-startup-message t) ;; Disable startup message
 (tool-bar-mode -1)               ;; Disable the toolbar
 (menu-bar-mode -1)               ;; Disable the menu bar
-(scroll-bar-mode -1)             ;; Disable visible scrollbar
+(scroll-bar-mode +1)             ;; Disable visible scrollbar
 (global-hl-line-mode +1)         ;; Highlight line
 (delete-selection-mode 1)        ;; Then inserting text while the mark is active causes the selected text to be deleted first.
 (tooltip-mode -1)                ;; Disable tooltips
@@ -31,19 +31,6 @@
           mac-right-option-modifier 'super
 	  ns-alternate-modifier 'meta
 	  ns-right-alternate-modifier 'none))
-
-;; starting resize emacs
-(defun set-frame-size-according-to-resolution ()
-  (interactive)
-  (if window-system
-      (progn
-	(if (> (x-display-pixel-width) 1280)
-            (add-to-list 'default-frame-alist (cons 'width 130))
-          (add-to-list 'default-frame-alist (cons 'width 80)))
-	(add-to-list 'default-frame-alist 
-		     (cons 'height (/ (- (x-display-pixel-height) 200)
-				      (frame-char-height)))))))
-(set-frame-size-according-to-resolution)
 
 ;; Define and initialise package repositories
 (require 'package)
@@ -182,6 +169,12 @@
   ("C-*" . er/expand-region)
   ("C--" . er/contract-region))
 
+(use-package beacon
+  :config
+  (setq beacon-push-mark 35)
+  (setq beacon-color "#d65d0e")
+  (beacon-mode t))
+
 ;; Window tabs
 (use-package centaur-tabs
   :ensure t
@@ -194,8 +187,6 @@
 	centaur-tabs-modified-marker "o")
   (centaur-tabs-mode t))
 
-
-
 ;; Window Selection with ace-window
 (use-package ace-window
   :bind (("M-o" . ace-window))
@@ -206,6 +197,7 @@
   :config
   (ace-window-display-mode 1))
 
+;; installed theme
 (use-package gruvbox-theme
   :ensure t)
 
@@ -252,7 +244,7 @@
  ((string-equal system-type "darwin") ; macOS
   (set-font "Monaco-14"))
  ((string-equal system-type "windows-nt") ; Windows
-  (set-font "Consolas-12"))
+ (set-font "Fira Code Retina-12"))
  ((string-equal system-type "gnu/linux") ; Linux
   (set-font "DejaVu Sans Mono-12")))
 
@@ -287,6 +279,43 @@
   :config
   (dashboard-setup-startup-hook))
 
+;; Org mode
+(use-package org
+  :config
+  (setq org-ellipsis " ▼")
+
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+	
+  (setq org-hide-emphasis-markers t)
+
+  (setq org-agenda-files
+	'("~/OrgFiles/Tasks.org"))
+  )
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+;; Org-mode Fontification
+(set-face-attribute 'org-document-title nil :height 150)
+(set-face-attribute 'org-level-1 nil :weight 'bold)
+(set-face-attribute 'org-level-2 nil :weight 'bold)
+
+(defun ne/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1)
+  (visual-line-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . ne/org-mode-visual-fill))
+
+;; Smooth scrolling
+(use-package smooth-scrolling :config (smooth-scrolling-mode t))
 
 ;;; Autocomplate
 (use-package company
@@ -334,18 +363,13 @@
 
 (add-hook 'tide-mode-hook #'company-mode)
 
-
-
-
-
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(tide typescript-mode rjsx-mode flycheck company dashboard projectile doom-modeline all-the-icons gruvbox-theme ace-window centaur-tabs expand-region flx ivy-rich ivy-prescient prescient counsel swiper which-key use-package)))
+   '(beacon org-notebook visual-fill-mode yasnippet which-key visual-fill-column use-package tide smooth-scrolling rjsx-mode projectile prettier-js org-bullets ivy-rich ivy-prescient gruvbox-theme flx expand-region doom-modeline dashboard counsel company centaur-tabs all-the-icons ace-window)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
