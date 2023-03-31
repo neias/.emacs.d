@@ -12,6 +12,7 @@
 (set-language-environment "English")
 (set-locale-environment "en.UTF-8")
 (prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
 
 (setq inhibit-startup-message t) ;; Disable startup message
 (tool-bar-mode -1)               ;; Disable the toolbar
@@ -20,7 +21,7 @@
 (global-hl-line-mode +1)         ;; Highlight line
 (delete-selection-mode 1)        ;; Then inserting text while the mark is active causes the selected text to be deleted first.
 (tooltip-mode -1)                ;; Disable tooltips
-(set-default-coding-systems 'utf-8)
+
 (setq backup-directory-alist '(("." . "~/.saves")))   ; Different backup director
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ; Display line numbers when programming
 
@@ -47,6 +48,7 @@
 (require 'use-package)
 (setq use-package-always-ensure 't)
 
+;; Instant help about keyboard shortcuts.
 (use-package which-key
   :ensure t
   :init
@@ -54,11 +56,12 @@
   :config
   (which-key-mode))
 
+;; Emacs package for fast searching within files/buffers.
 (use-package swiper
   :ensure t
   :after ivy)
 
-;; Better Completions with Ivy
+;; It is a package that allows searching options and making quick selections.
 (use-package ivy
   :ensure t
   :diminish
@@ -131,6 +134,7 @@
 			   (with-current-buffer buffer
 			     (not (derived-mode-p 'exwm-mode)))))))))
 
+;; It provides smart sorting and filtering of frequently used items.
 (use-package prescient :ensure t
   :after counsel
   :config
@@ -149,13 +153,11 @@
    :config
    (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets")))
 
-
 (use-package flx  ;; Improves sorting for fuzzy-matched results
   :after ivy
   :defer t
   :init
   (setq ivy-flx-limit 10000))
-
 
 ;; Highlight Matching Braces
 (use-package paren
@@ -175,18 +177,6 @@
   (setq beacon-color "#d65d0e")
   (beacon-mode t))
 
-;; Window tabs
-(use-package centaur-tabs
-  :ensure t
-  :config
-  (setq centaur-tabs-set-bar 'over
-	centaur-tabs-set-icons t
-	centaur-tabs-gray-out-icons 'buffer
-	centaur-tabs-height 24
-	centaur-tabs-set-modified-marker t
-	centaur-tabs-modified-marker "o")
-  (centaur-tabs-mode t))
-
 ;; Window Selection with ace-window
 (use-package ace-window
   :bind (("M-o" . ace-window))
@@ -198,23 +188,25 @@
   (ace-window-display-mode 1))
 
 ;; installed theme
-(use-package gruvbox-theme
-  :ensure t)
+(add-to-list 'load-path "~/.emacs.d/themes/ef-themes")
+(require 'ef-themes)
+(load-theme 'ef-light t)
 
 ;; dark/light theme selecting
 (defun dark-mode ()
   "Activate dark mode color theme"
   (interactive)
-  (load-theme 'gruvbox-dark-medium t))
+  (load-theme 'ef-autumn t))
 (global-set-key (kbd "C-c d") 'dark-mode)
 (defun light-mode ()
   "Activate light mode color theme."
   (interactive)
-  (load-theme 'gruvbox-light-hard t))
+  (load-theme 'ef-light t))
 (global-set-key (kbd "C-c l") 'light-mode)
 
+
 (use-package all-the-icons ;; M-x all-the-icons-install-fonts RET
-  :ensure t)
+  :if (display-graphic-p))
 
 (use-package doom-modeline
   :ensure t
@@ -233,6 +225,7 @@
   (doom-modeline-persp-name nil)
   (doom-modeline-buffer-file-name-style 'truncate-except-project)
   (doom-modeline-major-mode-icon nil))
+
 
 ;; Selected font 
 (defun set-font (font-name)
@@ -279,6 +272,7 @@
   :config
   (dashboard-setup-startup-hook))
 
+
 ;; Org mode
 (use-package org
   :config
@@ -287,12 +281,68 @@
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
+
+  (setq org-todo-keywords
+      (quote ((sequence "TODO(t)" "DOING(g)" "|" "DONE(d)"))))
 	
   (setq org-hide-emphasis-markers t)
 
   (setq org-agenda-files
 	'("~/OrgFiles/Tasks.org"))
   )
+
+;; todo list TODO, DONE, DOING
+(defun org-todo-if-needed (state)
+  "Change header state to STATE unless the current item is in STATE already."
+  (unless (string-equal (org-get-todo-state) state)
+    (org-todo state)))
+
+(defun ct/org-summary-todo-cookie (n-done n-not-done)
+  "Switch header state to DONE when all subentries are DONE, to TODO when none are DONE, and to DOING otherwise"
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo-if-needed (cond ((= n-done 0)
+                               "TODO")
+                              ((= n-not-done 0)
+                               "DONE")
+                              (t
+                               "DOING")))))
+(add-hook 'org-after-todo-statistics-hook #'ct/org-summary-todo-cookie)
+
+(defun ct/org-summary-checkbox-cookie ()
+  "Switch header state to DONE when all checkboxes are ticked, to TODO when none are ticked, and to DOING otherwise"
+  (let (beg end)
+    (unless (not (org-get-todo-state))
+      (save-excursion
+        (org-back-to-heading t)
+        (setq beg (point))
+        (end-of-line)
+        (setq end (point))
+        (goto-char beg)
+        ;; Regex group 1: %-based cookie
+        ;; Regex group 2 and 3: x/y cookie
+        (if (re-search-forward "\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]"
+                               end t)
+            (if (match-end 1)
+                ;; [xx%] cookie support
+                (cond ((equal (match-string 1) "100%")
+                       (org-todo-if-needed "DONE"))
+                      ((equal (match-string 1) "0%")
+                       (org-todo-if-needed "TODO"))
+                      (t
+                       (org-todo-if-needed "DOING")))
+              ;; [x/y] cookie support
+              (if (> (match-end 2) (match-beginning 2)) ; = if not empty
+                  (cond ((equal (match-string 2) (match-string 3))
+                         (org-todo-if-needed "DONE"))
+                        ((or (equal (string-trim (match-string 2)) "")
+                             (equal (match-string 2) "0"))
+                         (org-todo-if-needed "TODO"))
+                        (t
+                         (org-todo-if-needed "DOING")))
+                (org-todo-if-needed "DOING"))))))))
+(add-hook 'org-checkbox-statistics-hook #'ct/org-summary-checkbox-cookie)
+;; end TODO
+
 
 (use-package org-bullets
   :after org
@@ -314,54 +364,75 @@
 (use-package visual-fill-column
   :hook (org-mode . ne/org-mode-visual-fill))
 
-;; Smooth scrolling
-(use-package smooth-scrolling :config (smooth-scrolling-mode t))
 
+
+
+;;; Mevzu
 ;;; Autocomplate
 (use-package company
-  :ensure t)
+  :ensure t
+  :config (global-company-mode t))
+(setq company-minimum-prefix-length 1
+      company-idle-delay 0.0)
 
 (use-package flycheck
   :ensure t
   :hook (after-init . global-flycheck-mode))
 
+(use-package json-mode
+  :ensure t)
+
+;; web-mode
+(setq web-mode-markup-indent-offset 2)
+(setq web-mode-code-indent-offset 2)
+(setq web-mode-css-indent-offset 2)
+(use-package web-mode
+  :ensure t
+  :mode (("\\.js\\'" . web-mode)
+	 ("\\.jsx\\'" . web-mode)
+	 ("\\.ts\\'" . web-mode)
+	 ("\\.tsx\\'" . web-mode)
+	 ("\\.html\\'" . web-mode))
+  :commands web-mode)
+(add-hook 'web-mode-hook 'prettier-js-mode)
+
+
 (use-package prettier-js
-  :ensure t
-  :after (rjsx-mode)
-  :hook (rjsx-mode . prettier-js-mode))
+  :ensure t)
+(add-hook 'web-mode-hook #'(lambda ()
+                             (when (or (string-equal "jsx" (file-name-extension buffer-file-name))
+                                       (string-equal "tsx" (file-name-extension buffer-file-name)))
+                               (prettier-js-mode))))
 
-;;; Tide mode and company mode configuration for TypeScript, JavaScript, and React
-(use-package rjsx-mode
-  :mode ("\\.js?\\'" . rjsx-mode)
-  :hook (rjsx-mode . setup-tide-mode))
-
-(use-package typescript-mode
-  :ensure t
-  :mode ("\\.ts\\'" . typescript-mode)
-  :mode ("\\.tsx\\'" . typescript-mode)
-  :hook (typescript-mode . setup-tide-mode))
-
-(use-package js2-mode
-  :hook (js2-mode . setup-tide-mode))
 
 (use-package tide
   :ensure t
-  :hook ((rjsx-mode . setup-tide-mode)
-         (typescript-mode . setup-tide-mode)
-         (js2-mode . setup-tide-mode)))
+  :after (company flycheck)
+  :hook (
+	 (web-mode . setup-tide-mode)))
+
 
 (defun setup-tide-mode()
+  "Setup function for tide."
   (interactive)
   (tide-setup)
   (flycheck-mode +1)
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
   (tide-hl-identifier-mode +1)
-  (setq js-indent-level 2)
-  (setq typescript-indent-level 2)
-  (setq company-tooltip-align-annotations t)
-  (company-mode +1))
+  (company-mode +1)
+  (setq company-tooltip-align-annotations t))
 
-(add-hook 'tide-mode-hook #'company-mode)
+(use-package tide
+  :ensure t
+  :after (rjsx-mode company flycheck)
+  :hook (rjsx-mode . setup-tide-mode))
+
+
+(add-to-list 'exec-path "C:/tools/emacs/bin")
+
+;;; End Mevzu
+
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -369,7 +440,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(beacon org-notebook visual-fill-mode yasnippet which-key visual-fill-column use-package tide smooth-scrolling rjsx-mode projectile prettier-js org-bullets ivy-rich ivy-prescient gruvbox-theme flx expand-region doom-modeline dashboard counsel company centaur-tabs all-the-icons ace-window)))
+   '(tide prettier-js web-mode json-mode flycheck company visual-fill-column org-bullets dashboard projectile doom-modeline all-the-icons ace-window beacon expand-region flx yasnippet ivy-rich ivy-prescient prescient counsel swiper which-key use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

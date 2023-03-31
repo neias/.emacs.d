@@ -53,6 +53,8 @@ projectile-bookmarks.eld
 # network security
 /network-security.data
 
+/eshell
+
 
 ### macOS ###
 # General
