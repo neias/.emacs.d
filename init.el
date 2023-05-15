@@ -21,6 +21,7 @@
 (global-hl-line-mode +1)         ;; Highlight line
 (delete-selection-mode 1)        ;; Then inserting text while the mark is active causes the selected text to be deleted first.
 (tooltip-mode -1)                ;; Disable tooltips
+(setq ring-bell-function 'ignore);; Disable ring bell 
 
 (setq backup-directory-alist '(("." . "~/.saves")))   ; Different backup director
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ; Display line numbers when programming
@@ -168,7 +169,7 @@
 (use-package expand-region
   :ensure t
   :bind
-  ("C-*" . er/expand-region)
+  ("C-=" . er/expand-region)
   ("C--" . er/contract-region))
 
 (use-package beacon
@@ -237,7 +238,7 @@
  ((string-equal system-type "darwin") ; macOS
   (set-font "Monaco-14"))
  ((string-equal system-type "windows-nt") ; Windows
- (set-font "Fira Code Retina-12"))
+  (set-font "Fira Code Retina-12"))
  ((string-equal system-type "gnu/linux") ; Linux
   (set-font "DejaVu Sans Mono-12")))
 
@@ -364,6 +365,10 @@
 (use-package visual-fill-column
   :hook (org-mode . ne/org-mode-visual-fill))
 
+;;; org mode image prewiev
+(setq org-startup-with-inline-images t)
+
+
 
 
 
@@ -383,9 +388,6 @@
   :ensure t)
 
 ;; web-mode
-(setq web-mode-markup-indent-offset 2)
-(setq web-mode-code-indent-offset 2)
-(setq web-mode-css-indent-offset 2)
 (use-package web-mode
   :ensure t
   :mode (("\\.js\\'" . web-mode)
@@ -393,7 +395,18 @@
 	 ("\\.ts\\'" . web-mode)
 	 ("\\.tsx\\'" . web-mode)
 	 ("\\.html\\'" . web-mode))
-  :commands web-mode)
+  :commands web-mode
+  :config
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-comment-style 2)
+  (setq web-mode-enable-auto-indentation nil)
+  (setq web-mode-enable-css-colorization t)
+  (setq web-mode-enable-block-face t)
+  (setq web-mode-enable-comment-keywords t)
+  (setq web-mode-enable-heredoc-fontification t))
+
 (add-hook 'web-mode-hook 'prettier-js-mode)
 
 
@@ -427,10 +440,20 @@
   :after (rjsx-mode company flycheck)
   :hook (rjsx-mode . setup-tide-mode))
 
-
 (add-to-list 'exec-path "C:/tools/emacs/bin")
-
 ;;; End Mevzu
+
+
+
+;; Cygwin terminal emulator (use Cygwin's bash as the default shell)
+(setq explicit-shell-file-name "C:/cygwin64/bin/bash.exe")
+(setq shell-file-name explicit-shell-file-name)
+(add-to-list 'exec-path "C:/cygwin64/bin")
+(setq explicit-bash.exe-args '("--noediting" "--login" "-i"))
+(setq w32-quote-process-args ?\")
+
+
+
 
 
 
@@ -440,7 +463,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(tide prettier-js web-mode json-mode flycheck company visual-fill-column org-bullets dashboard projectile doom-modeline all-the-icons ace-window beacon expand-region flx yasnippet ivy-rich ivy-prescient prescient counsel swiper which-key use-package)))
+   '(ahk-mode vterm tide prettier-js web-mode json-mode flycheck company visual-fill-column org-bullets dashboard projectile doom-modeline all-the-icons ace-window beacon expand-region flx yasnippet ivy-rich ivy-prescient prescient counsel swiper which-key use-package))
+ '(warning-suppress-types '((emacs) (emacs) (emacs))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
