@@ -409,21 +409,15 @@
 
 (add-hook 'web-mode-hook 'prettier-js-mode)
 
-
 (use-package prettier-js
   :ensure t)
+
 (add-hook 'web-mode-hook #'(lambda ()
                              (when (or (string-equal "jsx" (file-name-extension buffer-file-name))
-                                       (string-equal "tsx" (file-name-extension buffer-file-name)))
-                               (prettier-js-mode))))
-
-
-(use-package tide
-  :ensure t
-  :after (company flycheck)
-  :hook (
-	 (web-mode . setup-tide-mode)))
-
+                                       (string-equal "tsx" (file-name-extension buffer-file-name))
+                                       (string-equal "ts" (file-name-extension buffer-file-name)))
+                               (prettier-js-mode)
+                               (setup-tide-mode))))
 
 (defun setup-tide-mode()
   "Setup function for tide."
@@ -431,30 +425,29 @@
   (tide-setup)
   (flycheck-mode +1)
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
   (tide-hl-identifier-mode +1)
   (company-mode +1)
   (setq company-tooltip-align-annotations t))
 
+
+;; (with-eval-after-load 'flycheck
+;;   (flycheck-add-mode 'typescript-tslint 'web-mode)
+;;   (flycheck-add-mode 'typescript-tide 'web-mode)
+;;   (flycheck-add-mode 'javascript-eslint 'web-mode)
+;;   (flycheck-add-mode 'jsx-tide 'web-mode)
+;;   )
+
 (use-package tide
   :ensure t
-  :after (rjsx-mode company flycheck)
-  :hook (rjsx-mode . setup-tide-mode))
+  :after (typescript-mode company flycheck)
+  :hook (before-save . tide-format-before-save))
+         
+         
+
 
 (add-to-list 'exec-path "C:/tools/emacs/bin")
 ;;; End Mevzu
-
-
-
-;; Cygwin terminal emulator (use Cygwin's bash as the default shell)
-(setq explicit-shell-file-name "C:/cygwin64/bin/bash.exe")
-(setq shell-file-name explicit-shell-file-name)
-(add-to-list 'exec-path "C:/cygwin64/bin")
-(setq explicit-bash.exe-args '("--noediting" "--login" "-i"))
-(setq w32-quote-process-args ?\")
-
-
-
-
 
 
 (custom-set-variables
@@ -463,7 +456,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(ahk-mode vterm tide prettier-js web-mode json-mode flycheck company visual-fill-column org-bullets dashboard projectile doom-modeline all-the-icons ace-window beacon expand-region flx yasnippet ivy-rich ivy-prescient prescient counsel swiper which-key use-package))
+   '(tide ahk-mode vterm prettier-js web-mode json-mode flycheck company visual-fill-column org-bullets dashboard projectile doom-modeline all-the-icons ace-window beacon expand-region flx yasnippet ivy-rich ivy-prescient prescient counsel swiper which-key use-package))
  '(warning-suppress-types '((emacs) (emacs) (emacs))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
