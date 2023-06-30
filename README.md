@@ -32,6 +32,7 @@ Bu belge, Emacs metin düzenleyicisinde kullanılacak bazı kullanışlı kısay
 - `C-x |`: `split-window-horizontally-instead` işlevi (Diğer tüm pencereleri siler ve mevcut pencereyi ekranın üst yarısında olacak şekilde yatay olarak böler)
 - `C-x _`: `split-window-vertically-instead` işlevi (Diğer tüm pencereleri siler ve mevcut pencereyi ekranın sol yarısında olacak şekilde dikey olarak böler)
 - `C-c`: `sanityinc/toggle-current-window-dedication` işlevi (Mevcut pencerenin mevcut tampona adanmış olup olmadığını değiştirir)
+- `C-S-[Up,Down,Left,Right]`: Birden çok pencere varken focus olan pencreyi seçtinizi yöne doğru kayrıdır.
 
 ## Git
 

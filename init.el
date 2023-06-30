@@ -36,6 +36,10 @@
 (require 'init-exec-path) ;; Set up $PATH
 
 
+;; (add-hook 'prog-mode-hook (lambda () (hs-minor-mode 1)))
+;; (global-set-key (kbd "C-c @ @") 'hs-hide-all)
+
+
 ;; Load configs for specific features and modes
 (require-package 'diminish)
 (maybe-require-package 'scratch)
@@ -46,6 +50,7 @@
 (require 'init-osx-keys)
 (require 'init-gui-frames)
 (require 'init-search)
+(require 'init-grep)
 
 (require 'init-windows)
 
@@ -57,6 +62,3 @@
 
 ;; (require 'init-javascript)
 (require 'init-typescript)
-
-
-
