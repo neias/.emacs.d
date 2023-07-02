@@ -12,12 +12,13 @@
 (add-hook 'after-init-hook 'winner-mode)
 
 
-;; Make "C-x o" prompt for a target window when there are more than 2
-(require-package 'switch-window)
-(setq-default switch-window-shortcut-style 'alphabet)
-(setq-default switch-window-timeout nil)
-(global-set-key (kbd "M-o") 'switch-window)
-
+;; Make "M-o" prompt for a target window when there are more than 2
+(require-package 'ace-window)
+(setq aw-scope 'frame)
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+(setq aw-minibuffer-flag t)
+(ace-window-display-mode 1)
+(global-set-key (kbd "M-o") 'ace-window)
 
 
 ;; When splitting window, show (other-buffer) in the new window
