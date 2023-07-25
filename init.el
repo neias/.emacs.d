@@ -62,3 +62,4 @@
 
 ;; (require 'init-javascript)
 (require 'init-typescript)
+(require 'init-org)

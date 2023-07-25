@@ -45,24 +45,25 @@ Bu belge, Emacs metin düzenleyicisinde kullanılacak bazı kullanışlı kısay
 Bu bölümde, Emacs'ta kullanılabilir çeşitli diğer kısayollar ve atamalar verilmiştir.
 
 - `Shift + Enter`: 'sanityinc/newline-at-end-of-line' işlevini çalıştırır
-- `Alt + i`: 'symbol-overlay-put' işlevini çalıştırır
-- `Alt + Shift + i`: 'symbol-overlay-remove-all' işlevini çalıştırır
-- `Alt + n`: 'symbol-overlay-jump-next' işlevini çalıştırır
-- `Alt + p`: 'symbol-overlay-jump-prev' işlevini çalıştırır
-- `Alt + Shift + z`: 'zap-up-to-char' işlevini çalıştırır
-- `Alt + Shift + y`: 'browse-kill-ring' işlevini çalıştırır
-- `Ctrl + ;`: 'avy-goto-char-timer' işlevini çalıştırır
-- `Ctrl + <`: 'mc/mark-previous-like-this' işlevini çalıştırır
-- `Ctrl + >`: 'mc/mark-next-like-this' işlevini çalıştırır
-- `Ctrl + +`: 'mc/mark-next-like-this' işlevini çalıştırır
-- `Ctrl + c, Ctrl + <`: 'mc/mark-all-like-this' işlevini çalıştırır
-- `Ctrl + .`: 'set-mark-command' işlevini çalıştırır
-- `Ctrl + x, Ctrl + .`: 'pop-global-mark' işlevini çalıştırır
-- `Ctrl + ;`: 'avy-goto-char-timer' işlevini çalıştırır
-- `Ctrl + o`: 'sanityinc/open-line-with-reindent' işlevini çalıştırır
+- `M-i`: 'symbol-overlay-put' işlevini çalıştırır
+- `M-S + i`: 'symbol-overlay-remove-all' işlevini çalıştırır
+- `M-n`: 'symbol-overlay-jump-next' işlevini çalıştırır
+- `M-p`: 'symbol-overlay-jump-prev' işlevini çalıştırır
+- `M-S + z`: 'zap-up-to-char' işlevini çalıştırır
+- `M-S + y`: 'browse-kill-ring' işlevini çalıştırır
+- `C-;`: 'avy-goto-char-timer' işlevini çalıştırır
+- `C-<`: 'mc/mark-previous-like-this' işlevini çalıştırır
+- `C->`: 'mc/mark-next-like-this' işlevini çalıştırır
+- `C-+`: 'mc/mark-next-like-this' işlevini çalıştırır
+- `C-c, C-<`: 'mc/mark-all-like-this' işlevini çalıştırır
+- `C-.`: 'set-mark-command' işlevini çalıştırır
+- `C-x, C-.`: 'pop-global-mark' işlevini çalıştırır
+- `C-;`: 'avy-goto-char-timer' işlevini çalıştırır
+- `C-o`: 'sanityinc/open-line-with-reindent' işlevini çalıştırır
 
 Daha fazlası için kodu kontrol edin!
 
 ---
 
 Bu, Emacs'ın bazı kısayollarını açıklayan bir README örneğidir. Daha fazla bilgi için, kodunuzu veya Emacs belgelerini kontrol edin. Kısayollar genellikle kullanıcıların kişisel tercihlerine göre değişir, bu yüzden kendi kısayollarınızı eklemekte özgürsünüz.
+
