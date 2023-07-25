@@ -1,4 +1,6 @@
 
+test
+
 # Emacs Kısayolları
 
 Bu belge, Emacs metin düzenleyicisinde kullanılacak bazı kullanışlı kısayolları içerir.
