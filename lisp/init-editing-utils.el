@@ -261,8 +261,6 @@ ORIG is the advised function, which is called with its ARGS."
 
 (advice-add 'kmacro-call-macro :around 'sanityinc/disable-features-during-macro-call)
 
-
-
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 (defun ne-hs-keys ()
   (global-set-key (kbd "<C-tab>") 'hs-toggle-hiding) ;; C-TAB to toggle hiding

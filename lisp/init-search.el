@@ -3,6 +3,7 @@
 ;;; Code:
 
 (require-package 'swiper)
+(maybe-require-package 'counsel)
 
 ;; Ivy settings
 (require-package 'ivy)

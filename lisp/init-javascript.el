@@ -102,7 +102,12 @@
 
 (when (maybe-require-package 'add-node-modules-path)
   (dolist (mode '(typescript-mode js-mode js2-mode coffee-mode))
-    (add-hook (derived-mode-hook-name mode) 'add-node-modules-path)))
+    (let ((hook-name (intern (concat (symbol-name mode) "-hook"))))
+      (add-hook hook-name 'add-node-modules-path))))
+
+;; (when (maybe-require-package 'add-node-modules-path)
+;;   (dolist (mode '(typescript-mode js-mode js2-mode coffee-mode))
+;;     (add-hook (derived-mode-hook-name mode) 'add-node-modules-path)))
 
 
 (provide 'init-javascript)

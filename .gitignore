@@ -139,4 +139,7 @@ site-lisp/package/
 /smex-items
 /eln-cache/
 /projects
-
+# editing
+/openai
+/request
+/straight

@@ -20,6 +20,7 @@
 (defconst *spell-check-support-enabled* nil) ;; Enable with t if you prefer
 (defconst *is-a-mac* (eq system-type 'darwin))
 
+
 ;; Adjust garbage collection thresholds during startup, and thereafter
 (setq normal-gc-cons-threshold (* 20 1024 1024))
 (setq init-gc-cons-threshold (* 128 1024 1024))
@@ -27,8 +28,9 @@
 (add-hook 'emacs-startup-hook
           (lambda () (setq gc-cons-threshold normal-gc-cons-threshold)))
 
-
+
 ;; Bootstrap config
+
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (require 'init-utils)
 (require 'init-site-lisp) ;; Must come before elpa, as it may provide package.el
@@ -45,7 +47,6 @@
 (maybe-require-package 'scratch)
 (require-package 'command-log-mode)
 
-
 (require 'init-themes)
 (require 'init-osx-keys)
 (require 'init-gui-frames)
@@ -53,13 +54,15 @@
 (require 'init-grep)
 
 (require 'init-windows)
-
 (require 'init-editing-utils)
 
 (require 'init-git)
 
 (require 'init-projectile)
 
-;; (require 'init-javascript)
+(require 'init-javascript)
 (require 'init-typescript)
+(require 'init-kotlin)
+(require 'init-php)
 (require 'init-org)
+;; (require 'init-terminals)
